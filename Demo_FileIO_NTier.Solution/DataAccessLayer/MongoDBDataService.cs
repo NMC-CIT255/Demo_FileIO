@@ -14,6 +14,7 @@ namespace Demo_FileIO_NTier.DataAccessLayer
 {
     public class MongoDBDataService : IDataService
     {
+        static string _connectionString;
 
         /// <summary>
         /// read the mongoDb collection and load a list of character objects
@@ -23,13 +24,9 @@ namespace Demo_FileIO_NTier.DataAccessLayer
         {
             List<Character> characters = new List<Character>();
 
-
-
             try
             {
-                var client = new MongoClient(
-                    "mongodb://johnvelis:password01@cluster0-shard-00-00-hasci.mongodb.net:27017,cluster0-shard-00-01-hasci.mongodb.net:27017,cluster0-shard-00-02-hasci.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
-                    );
+                var client = new MongoClient(_connectionString);
                 IMongoDatabase database = client.GetDatabase("cit255");
                 IMongoCollection<Character> characterList = database.GetCollection<Character>("flintstone_characters");
 
@@ -51,14 +48,12 @@ namespace Demo_FileIO_NTier.DataAccessLayer
         {
             try
             {
-                var client = new MongoClient(
-                    "mongodb://johnvelis:password01@cluster0-shard-00-00-hasci.mongodb.net:27017,cluster0-shard-00-01-hasci.mongodb.net:27017,cluster0-shard-00-02-hasci.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
-                    );
+                var client = new MongoClient(_connectionString);
                 IMongoDatabase database = client.GetDatabase("cit255");
                 IMongoCollection<Character> characterList = database.GetCollection<Character>("flintstone_characters");
 
                 //
-                // delete all documents in the collection
+                // delete all documents in the collection to reset the collection
                 //
                 characterList.DeleteMany(Builders<Character>.Filter.Empty);
 
@@ -73,7 +68,7 @@ namespace Demo_FileIO_NTier.DataAccessLayer
 
         public MongoDBDataService()
         {
-            
+            _connectionString = DataSettings.connectionString;
         }
     }
 }
